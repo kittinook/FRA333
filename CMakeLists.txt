@@ -30,6 +30,8 @@ ament_python_install_package(${PROJECT_NAME})
 # Install Python executables
 install(PROGRAMS
   scripts/01_pub.py
+  scripts/01_sub.py
+  scripts/02_controller.py
 # EDIT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   DESTINATION lib/${PROJECT_NAME}
 )
@@ -48,9 +50,10 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# rosidl_generate_interfaces(${PROJECT_NAME}
-  # EDIT <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-# )
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/SetGoal.srv"
+  DEPENDENCIES geometry_msgs
+)
 
 ################ INSTALL LAUNCH, ETC #################
 install(DIRECTORY
