@@ -33,13 +33,30 @@ class Scheduler(Node):
         self.send_enable_request()
 
     def rand_goal_callback(self,request,response):
-        pass
+        goal = 9*np.random.rand(2)+0.5
+        response.position = Point()
+        response.position.x = goal[0]
+        response.position.y = goal[1]
+        self.send_set_goal_request(response.position)
+        self.send_enable_request()
+        self.get_logger().info(f'New goal => x:{goal[0]},y:{goal[1]}')
+        return response
     def send_enable_request(self):
-        pass
+        req = Empty.Request()
+        self.future = self.enable_client.call_async(req)
     def send_set_goal_request(self,position):
-        pass
+        req = SetGoal.Request()
+        req.position = position
+        self.future = self.set_goal_client.call_async(req)
     def notify_arrival_callback(self,request,response):
-        pass
+        self.idx = self.idx + 1
+        if self.idx < self.num_via_points:
+            current_goal = Point()
+            current_goal.x = self.via_points[0][self.idx]
+            current_goal.y = self.via_points[1][self.idx]
+            self.send_set_goal_request(current_goal)
+            self.send_enable_request()
+        return response
 
 def main(args=None):
     rclpy.init(args=args)
