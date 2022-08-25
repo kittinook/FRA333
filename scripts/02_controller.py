@@ -27,9 +27,11 @@ class Controller(Node):
         print("Controller is online")
 
     def timer_callback(self):
-        pass
+        if self.isEnable:
+            msg = self.control()
+            self.command_publisher.publish(msg)
     def pose_callback(self,msg):
-        pass
+        self.pose = msg
     def control(self):
         msg = Twist()
         current_position = np.array([self.pose.x,self.pose.y])
@@ -49,13 +51,14 @@ class Controller(Node):
         msg.angular.z = w
         return msg
     def set_goal_callback(self,request,response):
-        pass
+        self.goal = np.array([request.position.x,request.position.y])
         return response
     def enable_callback(self,request,response):
-        pass
+        self.isEnable = True
         return response
     def send_notify_arrival_request(self):
-        pass
+        req = Empty.Request()
+        self.future = self.notify_arrival_client.call_async(req)
 
 def main(args=None):
     rclpy.init(args=args)
